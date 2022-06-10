@@ -1,0 +1,4 @@
+project: vsearch
+target: vsearch
+cmds:
+  - cmd: /usr/local/bin/vsearch --sortbylength @@ --output /dev/null
