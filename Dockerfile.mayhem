@@ -5,17 +5,12 @@ RUN apk add --no-cache \
         libstdc++ zlib-dev bzip2-dev \
         autoconf automake make g++ 
 RUN ./autogen.sh && \
-    ./configure CFLAGS="-O3" CXXFLAGS="-O3" && \
+    ./configure CFLAGS="-O3" CXXFLAGS="-O3" --prefix=/install && \
     make clean && \
     make -j8 && \
     make install
 
-RUN mkdir -p /deps
-RUN ldd /usr/local/bin/vsearch | tr -s '[:blank:]' '\n' | grep '^/' | xargs -I % sh -c 'cp % /deps;'
-
 FROM alpine:latest as package
-
-COPY --from=builder /deps /deps
-COPY --from=builder /usr/local/bin/vsearch /usr/local/bin/vsearch
-ENV LD_LIBRARY_PATH=/deps
-
+RUN apk add --no-cache \
+        libstdc++ g++
+COPY --from=builder /install /install
